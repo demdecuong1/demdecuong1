@@ -1,14 +1,17 @@
 import { Typography, Box, Card, CardContent } from '@mui/material';
 import AppShell from '@/components/AppShell';
 import StatusChip from '@/components/StatusChip';
+import { getCurrentUser } from '@/lib/auth';
 
 /**
- * Cases list page (placeholder for Phase 0)
+ * Cases list page
  * Will be fully implemented in Phase 3
  */
-export default function CasesPage() {
+export default async function CasesPage() {
+  const user = await getCurrentUser();
+
   return (
-    <AppShell>
+    <AppShell user={user?.profile}>
       <Box>
         <Typography variant="h4" component="h1" gutterBottom>
           Cases

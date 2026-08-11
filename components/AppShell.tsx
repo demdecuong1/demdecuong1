@@ -15,6 +15,8 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -24,26 +26,54 @@ import {
   Dashboard as DashboardIcon,
   AdminPanelSettings as AdminIcon,
   Person as PersonIcon,
+  Logout as LogoutIcon,
 } from '@mui/icons-material';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { createBrowserClient } from '@/lib/supabase/client';
+import type { UserProfile } from '@/lib/auth';
 
 const DRAWER_WIDTH = 240;
 
 interface AppShellProps {
   children: React.ReactNode;
+  user?: UserProfile | null;
 }
 
 /**
  * Material Design 3 app shell with top AppBar and left navigation drawer.
- * Includes notification bell with badge and user menu placeholder.
+ * Includes notification bell with badge and user menu.
  */
-export default function AppShell({ children }: AppShellProps) {
+export default function AppShell({ children, user }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [userMenuAnchor, setUserMenuAnchor] = React.useState<null | HTMLElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setUserMenuAnchor(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setUserMenuAnchor(null);
+  };
+
+  const handleSignOut = async () => {
+    const supabase = createBrowserClient();
+    await supabase.auth.signOut();
+    router.push('/sign-in');
+    router.refresh();
+  };
+
+  const roleLabels: Record<string, string> = {
+    portal_admin: 'Portal Admin',
+    internal_manager: 'Internal Manager',
+    internal_user: 'Internal User',
+    service_partner: 'Service Partner',
   };
 
   const navigationItems = [
@@ -129,23 +159,56 @@ export default function AppShell({ children }: AppShellProps) {
             </Badge>
           </IconButton>
 
-          {/* User menu placeholder */}
+          {/* User menu */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                User Name
-              </Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Role
-              </Typography>
-            </Box>
+            {user && (
+              <Box sx={{ display: { xs: 'none', sm: 'block' }, textAlign: 'right' }}>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {user.full_name}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  {roleLabels[user.role] || user.role}
+                </Typography>
+              </Box>
+            )}
             <IconButton
               size="large"
               aria-label="account of current user"
+              aria-controls="user-menu"
+              aria-haspopup="true"
+              onClick={handleUserMenuOpen}
               color="inherit"
             >
               <AccountCircle />
             </IconButton>
+            <Menu
+              id="user-menu"
+              anchorEl={userMenuAnchor}
+              open={Boolean(userMenuAnchor)}
+              onClose={handleUserMenuClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <MenuItem component={Link} href="/profile" onClick={handleUserMenuClose}>
+                <ListItemIcon>
+                  <PersonIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Profile</ListItemText>
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={handleSignOut}>
+                <ListItemIcon>
+                  <LogoutIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Sign out</ListItemText>
+              </MenuItem>
+            </Menu>
           </Box>
         </Toolbar>
       </AppBar>
