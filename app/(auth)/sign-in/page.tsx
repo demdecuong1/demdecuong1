@@ -17,7 +17,7 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import { createBrowserClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function SignInPage() {
     setError(null);
 
     try {
-      const supabase = createBrowserClient();
+      const supabase = createClient();
 
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,

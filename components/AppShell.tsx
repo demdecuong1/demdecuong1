@@ -30,7 +30,7 @@ import {
 } from '@mui/icons-material';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createBrowserClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type { UserProfile } from '@/lib/auth';
 
 const DRAWER_WIDTH = 240;
@@ -63,7 +63,7 @@ export default function AppShell({ children, user }: AppShellProps) {
   };
 
   const handleSignOut = async () => {
-    const supabase = createBrowserClient();
+    const supabase = createClient();
     await supabase.auth.signOut();
     router.push('/sign-in');
     router.refresh();
