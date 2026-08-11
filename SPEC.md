@@ -203,17 +203,17 @@ Goal: a user should immediately see *what changed* and *where*, without hunting.
 
 ---
 
-## 12. Decisions to fill in (before building features)
+## 12. Decisions (filled in)
 
-- [ ] Regions list:
-- [ ] Service trackers list (+ which region each belongs to):
-- [ ] Partner user belongs to one tracker or many?
-- [ ] Full permission matrix (roles ×: create / read / update / delete / upload / comment / admin):
-- [ ] Case statuses and allowed transitions:
-- [ ] Which of the §6 fields are stable vs dynamic; data type + visibility per dynamic field:
-- [ ] Case number format (e.g. FR-2026-00042):
-- [ ] Document rules: allowed types, max size, per-doc visibility?
-- [ ] Auth method: email+password or magic link?
-- [ ] Can internal users delete cases, or admin-only?
-- [ ] Notification triggers to enable at launch + any user preferences:
-- [ ] Report exports needed (CSV/PDF)?
+- [x] **Regions list:** All EMEA countries (France, Germany, Italy, Spain, UK, Netherlands, Belgium, etc.)
+- [x] **Service trackers list:** One tracker per EMEA country, named `TwoService-{Country}` (e.g., TwoService-France, TwoService-Germany, TwoService-Italy)
+- [x] **Partner user belongs to one tracker or many?** One tracker (scoped to their service organization)
+- [x] **Auth method:** Email + password
+- [x] **Case statuses (from CSV):** Open, In Progress, Scheduled, On hold, Completed, Cancelled
+- [x] **Case number format:** Simple integer sequence (32, 34, 67, etc.) — can be enhanced later with prefixes
+- [ ] Full permission matrix (roles ×: create / read / update / delete / upload / comment / admin): *To be defined in Phase 2*
+- [ ] Which of the §6 fields are stable vs dynamic: *To be defined in Phase 1 based on CSV analysis*
+- [ ] Document rules: allowed types, max size, per-doc visibility? *To be defined in Phase 5*
+- [ ] Can internal users delete cases, or admin-only? *To be defined in Phase 2*
+- [ ] Notification triggers to enable at launch + any user preferences: *To be defined in Phase 8*
+- [ ] Report exports needed (CSV/PDF)? *To be defined in Phase 9*
