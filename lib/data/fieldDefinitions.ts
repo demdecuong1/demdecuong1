@@ -5,7 +5,7 @@
  * Hard Rule #5: Per-field visibility is applied server-side.
  */
 
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { UserRole } from '@/lib/auth';
 
 export type FieldDataType = 'text' | 'textarea' | 'number' | 'date' | 'boolean' | 'select';
@@ -29,7 +29,7 @@ export interface FieldDefinition {
  * Hard Rule #5: Per-field visibility is applied server-side.
  */
 export async function getFieldDefinitions(role: UserRole): Promise<FieldDefinition[]> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('field_definitions')

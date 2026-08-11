@@ -6,7 +6,7 @@
  * Hard Rule #3: Relevant mutations create notifications
  */
 
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { writeAuditEvent, notifyRelevantUsers } from './audit';
 
 export type CaseStatus = 'open' | 'in_progress' | 'scheduled' | 'on_hold' | 'completed' | 'cancelled';
@@ -46,7 +46,7 @@ export interface Case {
  * Automatically scoped by RLS policies.
  */
 export async function getCases(filters: CaseFilters = {}): Promise<{ data: Case[]; count: number }> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   let query = supabase
     .from('cases')
@@ -115,7 +115,7 @@ export async function getCases(filters: CaseFilters = {}): Promise<{ data: Case[
  * RLS automatically enforces scope.
  */
 export async function getCaseById(caseId: string): Promise<Case | null> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('cases')
@@ -156,7 +156,7 @@ export async function updateCase(
     data?: Record<string, any>;
   }
 ): Promise<Case> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   // Get current state for audit trail
   const { data: currentCase } = await supabase
@@ -236,7 +236,7 @@ export async function createCase(
     data?: Record<string, any>;
   }
 ): Promise<Case> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('cases')
@@ -278,7 +278,7 @@ export async function createCase(
  * Updates case_views.last_seen_at for change awareness.
  */
 export async function markCaseAsViewed(userId: string, caseId: string): Promise<void> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   await supabase
     .from('case_views')

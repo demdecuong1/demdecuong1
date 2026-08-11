@@ -10,7 +10,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export type UserRole = 'portal_admin' | 'internal_manager' | 'internal_user' | 'service_partner';
 
@@ -40,7 +40,7 @@ export interface AuthenticatedUser {
  * Returns null if not authenticated.
  */
 export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   const { data: { user }, error } = await supabase.auth.getUser();
 
@@ -80,7 +80,7 @@ export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
  * - service_partner: only their assigned tracker(s)
  */
 export async function getUserScope(userId: string, role: UserRole): Promise<UserScope> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   if (role === 'portal_admin' || role === 'internal_manager' || role === 'internal_user') {
     // Internal users see everything
@@ -147,7 +147,7 @@ export async function requireRole(requiredRole: UserRole | UserRole[]): Promise<
  * Used for detail pages and mutations.
  */
 export async function canAccessCase(userId: string, caseId: string): Promise<boolean> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   // Let RLS handle this - try to fetch the case
   // If RLS blocks it, we get null

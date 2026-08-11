@@ -2,7 +2,7 @@
  * Service Trackers Data Access Layer
  */
 
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { getUserScope, UserRole } from '@/lib/auth';
 
 export interface ServiceTracker {
@@ -18,7 +18,7 @@ export interface ServiceTracker {
  * Internal users see all; partners see only their assigned trackers.
  */
 export async function getAccessibleTrackers(userId: string, role: UserRole): Promise<ServiceTracker[]> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   if (role === 'portal_admin' || role === 'internal_manager' || role === 'internal_user') {
     // Internal users see all trackers
@@ -60,7 +60,7 @@ export async function getAccessibleTrackers(userId: string, role: UserRole): Pro
  * Get trackers for a specific region.
  */
 export async function getTrackersByRegion(userId: string, role: UserRole, regionId: string): Promise<ServiceTracker[]> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   const scope = await getUserScope(userId, role);
 
@@ -89,7 +89,7 @@ export async function getTrackersByRegion(userId: string, role: UserRole, region
  * Get a single tracker by ID.
  */
 export async function getTrackerById(trackerId: string): Promise<ServiceTracker | null> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('service_trackers')

@@ -5,7 +5,7 @@
  * Hard Rule #3: Relevant mutations create notifications
  */
 
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export type EventType =
   | 'created'
@@ -39,7 +39,7 @@ export interface NotificationData {
  * Called automatically by all case mutations.
  */
 export async function writeAuditEvent(data: AuditEventData): Promise<void> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   const { error } = await supabase.from('case_events').insert({
     case_id: data.caseId,
@@ -62,7 +62,7 @@ export async function writeAuditEvent(data: AuditEventData): Promise<void> {
  * Respects user's scope - only notifies if they can see the case.
  */
 export async function createNotification(data: NotificationData): Promise<void> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   const { error } = await supabase.from('notifications').insert({
     user_id: data.userId,
@@ -90,7 +90,7 @@ export async function notifyRelevantUsers(
   message: string,
   excludeUserId?: string
 ): Promise<void> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   // Get the case to determine who should be notified
   const { data: caseData } = await supabase

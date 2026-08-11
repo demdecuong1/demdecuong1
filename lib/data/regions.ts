@@ -2,7 +2,7 @@
  * Regions Data Access Layer
  */
 
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { getUserScope, UserRole } from '@/lib/auth';
 
 export interface Region {
@@ -17,7 +17,7 @@ export interface Region {
  * Internal users see all; partners see only their assigned regions.
  */
 export async function getAccessibleRegions(userId: string, role: UserRole): Promise<Region[]> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   if (role === 'portal_admin' || role === 'internal_manager' || role === 'internal_user') {
     // Internal users see all regions
@@ -59,7 +59,7 @@ export async function getAccessibleRegions(userId: string, role: UserRole): Prom
  * Get a single region by ID.
  */
 export async function getRegionById(regionId: string): Promise<Region | null> {
-  const supabase = await createServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('regions')
