@@ -3,7 +3,7 @@
 import { Chip, ChipProps } from '@mui/material';
 import { statusColors } from '@/theme';
 
-type CaseStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
+type CaseStatus = 'open' | 'in_progress' | 'scheduled' | 'on_hold' | 'completed' | 'cancelled';
 
 interface StatusChipProps extends Omit<ChipProps, 'label' | 'color'> {
   status: CaseStatus;
@@ -12,8 +12,10 @@ interface StatusChipProps extends Omit<ChipProps, 'label' | 'color'> {
 const statusLabels: Record<CaseStatus, string> = {
   open: 'Open',
   in_progress: 'In Progress',
-  resolved: 'Resolved',
-  closed: 'Closed',
+  scheduled: 'Scheduled',
+  on_hold: 'On Hold',
+  completed: 'Completed',
+  cancelled: 'Cancelled',
 };
 
 /**

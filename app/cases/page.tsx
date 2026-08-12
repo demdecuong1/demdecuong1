@@ -1,40 +1,63 @@
-import { Typography, Box, Card, CardContent } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import { Add as AddIcon } from '@mui/icons-material';
 import AppShell from '@/components/AppShell';
-import StatusChip from '@/components/StatusChip';
+import PageHeader from '@/components/PageHeader';
+import CaseList from './CaseList';
 import { getCurrentUser } from '@/lib/auth';
+import { getCases } from '@/lib/data/cases';
 
 /**
  * Cases list page
- * Will be fully implemented in Phase 3
+ * Displays all cases accessible to the current user with filters
  */
-export default async function CasesPage() {
+export default async function CasesPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const user = await getCurrentUser();
 
+  if (!user) {
+    return null; // Middleware will redirect to sign-in
+  }
+
+  // Parse search params for filters
+  const status = searchParams.status
+    ? Array.isArray(searchParams.status)
+      ? searchParams.status
+      : [searchParams.status]
+    : undefined;
+
+  const search = typeof searchParams.search === 'string' ? searchParams.search : undefined;
+  const regionId = typeof searchParams.region === 'string' ? searchParams.region : undefined;
+  const trackerId = typeof searchParams.tracker === 'string' ? searchParams.tracker : undefined;
+
+  // Fetch cases with filters
+  const { data: cases, count } = await getCases({
+    status: status as any,
+    regionId,
+    trackerId,
+    searchQuery: search,
+  });
+
   return (
-    <AppShell user={user?.profile}>
+    <AppShell user={user.profile}>
       <Box>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Cases
-        </Typography>
+        <PageHeader
+          title="Cases"
+          count={count}
+          actions={
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              disabled // TODO: Implement create case
+            >
+              Create case
+            </Button>
+          }
+        />
 
-        <Card sx={{ mt: 3 }}>
-          <CardContent>
-            <Typography variant="body1" color="text.secondary" gutterBottom>
-              Welcome to the Evident Case Portal. This is a placeholder page.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-              The case list will be implemented in Phase 3.
-            </Typography>
-
-            {/* Demo status chips to verify theme */}
-            <Box sx={{ mt: 3, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              <StatusChip status="open" />
-              <StatusChip status="in_progress" />
-              <StatusChip status="resolved" />
-              <StatusChip status="closed" />
-            </Box>
-          </CardContent>
-        </Card>
+        <CaseList cases={cases} totalCount={count} userRole={user.profile.role} />
       </Box>
     </AppShell>
   );

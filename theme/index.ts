@@ -74,12 +74,22 @@ export const statusColors = {
     light: '#ffddb5',
     contrastText: '#ffffff',
   },
-  resolved: {
+  scheduled: {
+    main: '#0061a4',
+    light: '#b8e7ff',
+    contrastText: '#ffffff',
+  },
+  on_hold: {
+    main: '#7d5260',
+    light: '#ffd8e4',
+    contrastText: '#ffffff',
+  },
+  completed: {
     main: '#006e26',
     light: '#8bff7e',
     contrastText: '#ffffff',
   },
-  closed: {
+  cancelled: {
     main: '#5f5e5e',
     light: '#e3e2e2',
     contrastText: '#ffffff',
