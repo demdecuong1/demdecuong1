@@ -76,12 +76,17 @@ export default function AppShell({ children, user }: AppShellProps) {
     service_partner: 'Service Partner',
   };
 
-  const navigationItems = [
-    { text: 'Cases', icon: <CasesIcon />, href: '/cases' },
-    { text: 'Reports', icon: <DashboardIcon />, href: '/reports' },
-    { text: 'Admin', icon: <AdminIcon />, href: '/admin' },
-    { text: 'Profile', icon: <PersonIcon />, href: '/profile' },
+  // Navigation items - Admin only visible to portal_admin
+  const allNavigationItems = [
+    { text: 'Cases', icon: <CasesIcon />, href: '/cases', roles: ['portal_admin', 'internal_manager', 'internal_user', 'service_partner'] },
+    { text: 'Reports', icon: <DashboardIcon />, href: '/reports', roles: ['portal_admin', 'internal_manager', 'internal_user', 'service_partner'] },
+    { text: 'Admin', icon: <AdminIcon />, href: '/admin', roles: ['portal_admin'] },
+    { text: 'Profile', icon: <PersonIcon />, href: '/profile', roles: ['portal_admin', 'internal_manager', 'internal_user', 'service_partner'] },
   ];
+
+  const navigationItems = allNavigationItems.filter(item =>
+    user && item.roles.includes(user.role)
+  );
 
   const drawer = (
     <div>
