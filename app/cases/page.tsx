@@ -13,7 +13,7 @@ import { getCases } from '@/lib/data/cases';
 export default async function CasesPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const user = await getCurrentUser();
 
@@ -21,16 +21,19 @@ export default async function CasesPage({
     return null; // Middleware will redirect to sign-in
   }
 
+  // Await searchParams (Next.js 15 requirement)
+  const params = await searchParams;
+
   // Parse search params for filters
-  const status = searchParams.status
-    ? Array.isArray(searchParams.status)
-      ? searchParams.status
-      : [searchParams.status]
+  const status = params.status
+    ? Array.isArray(params.status)
+      ? params.status
+      : [params.status]
     : undefined;
 
-  const search = typeof searchParams.search === 'string' ? searchParams.search : undefined;
-  const regionId = typeof searchParams.region === 'string' ? searchParams.region : undefined;
-  const trackerId = typeof searchParams.tracker === 'string' ? searchParams.tracker : undefined;
+  const search = typeof params.search === 'string' ? params.search : undefined;
+  const regionId = typeof params.region === 'string' ? params.region : undefined;
+  const trackerId = typeof params.tracker === 'string' ? params.tracker : undefined;
 
   // Fetch cases with filters
   const { data: cases, count } = await getCases({

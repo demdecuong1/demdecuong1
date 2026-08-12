@@ -13,21 +13,24 @@ import { getFieldDefinitionsBySection } from '@/lib/data/fieldDefinitions';
  * Case detail page
  * Displays case information with dynamic fields grouped by section
  */
-export default async function CaseDetailPage({ params }: { params: { id: string } }) {
+export default async function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser();
 
   if (!user) {
     return null; // Middleware will redirect
   }
 
-  const caseData = await getCaseById(params.id);
+  // Await params (Next.js 15 requirement)
+  const { id } = await params;
+
+  const caseData = await getCaseById(id);
 
   if (!caseData) {
     notFound();
   }
 
   // Mark case as viewed for change awareness
-  await markCaseAsViewed(user.id, params.id);
+  await markCaseAsViewed(user.id, id);
 
   // Get field definitions grouped by section
   const fieldsBySection = await getFieldDefinitionsBySection(user.profile.role);
